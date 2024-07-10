@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Avatar from "@mui/material/Avatar";
 import CreateGroup from "../../components/createGroup";
 const Groups = () => {
-    const groups = [{name:'kodaikanal dairy'}]
+    const groups = [{ name: 'kodaikanal dairy' }]
     const [createGroup, setCreateGroup] = useState(false)
     const [width, setWidth] = useState(0);
 
@@ -64,7 +64,8 @@ const Groups = () => {
                 <div className={`${(createGroup || groups?.length >= 1) && width >= 768 ? 'w-[70%]' : 'w-[100%] block'}`}>
                     {!createGroup && groups?.length == 0 && <div className="flex justify-end"><AddIcon className="hidden md:block bg-blue-500 text-white rounded-md mt-10 mr-10" fontSize="large" onClick={() => { setCreateGroup(!createGroup) }} /></div>}
                     {createGroup && <div className="block md:hidden mr-5 mt-5 ml-5"><CreateGroup handleBack={(back: boolean) => { setCreateGroup(back) }} /></div>}
-                    <div className={`flex flex-col justify-between items-center h-[300px] w-full my-20 md:my-30 ${width <= 768 && groups?.length >= 1 ? 'hidden' : 'block'}`}>
+                    {/*  ${width <= 768 && createGroup && groups?.length == 0 ? 'hidden' : 'block'}    width < 768 && groups?.length !== 0*/}
+                    <div className={`flex flex-col justify-between items-center h-[300px] w-full my-20 md:my-30 ${ ( width >= 768) || (groups?.length == 0 && width < 768 && !createGroup) ? 'block' : 'hidden'}`}>
                         <div className="text-lg">{groups?.length == 0 ? 'No Groups available' : 'Choose Group'}</div>
                         <img src="https://img.freepik.com/free-vector/smiling-person-crowd_23-2148422588.jpg" alt="" />
                         <div className="block md:hidden px-7 text-lg bg-blue-500 text-white rounded-md" onClick={() => { setCreateGroup(!createGroup) }}>Create Group</div>
