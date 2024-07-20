@@ -3,12 +3,11 @@ import Navbar from "../../components/navbar";
 import AddIcon from '@mui/icons-material/Add';
 import Avatar from "@mui/material/Avatar";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Drawer, Tab, Tabs, TextField } from "@mui/material";
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
+import { Dialog, Drawer, Tab, Tabs, TextField } from "@mui/material";
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Modal from '@mui/material/Modal';
 import CreateGroup from "../../components/createGroup";
 const list = [
     {
@@ -67,15 +66,16 @@ const list = [
     }
 ]
 const Groups = () => {
-    const groups = [{ id: '1', name: 'kodaikanal dairy' }]
-    const tabs = ['Settle Up', 'Balance', 'Total', 'Convert to USD',]
-    const [createGroup, setCreateGroup] = useState(false)
+    const groups = [{ id: '1', name: 'kodaikanal dairy' }];
+    const tabs = ['Settle Up', 'Balance', 'Total', 'Convert to USD',];
+    const [createGroup, setCreateGroup] = useState(false);
     const [width, setWidth] = useState(0);
-    const [group, setGroup] = useState('')
+    const [group, setGroup] = useState('');
     const [tab, setTab] = useState<any>('Settle Up');
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false);
+    const [deleteSpend, setDeleteSpend] = useState(false);
     const [name, setName] = React.useState('0');
-    const [spentFor, setSpendFor] = useState('Food')
+    const [spentFor, setSpendFor] = useState('Food');
     const handleChange = (event: SelectChangeEvent) => {
         setName(event.target.value as string);
     };
@@ -152,47 +152,55 @@ const Groups = () => {
                 </div>
                 <div className="h-[91%] overflow-y-scroll">
                     {handleTabContent()}
-                    <Drawer
-                        anchor={width >= 768 ? "right" : "bottom"}
-                        open={open}
-                        onClose={() => setOpen(false)}
-                        className={`${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}
-                    >
-                        <div className={`p-4 ${width >= 768 && 'w-[500px]'} ${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
-                            <div>Edit Split details</div>
-                            <div>
-                                <div>Paid by</div>
+                    <Drawer anchor={width >= 768 ? "right" : "bottom"} open={open} onClose={() => setOpen(false)} className={`${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
+                        <div className={`${width >= 768 && 'w-[500px] h-full flex flex-col justify-between'} ${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
+                            <div className="p-4">
+                                <div className="text-lg">Edit Split details</div>
                                 <div>
-                                    <FormControl fullWidth>
-                                        <Select
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={name}
-                                            onChange={handleChange}
-                                        >
-                                            {['Sanjay', 'Saran', 'Gowtham', 'Naveen']?.map((ele, index) => {
-                                                return (
-                                                    <MenuItem key={index} value={index}>{ele}</MenuItem>
-                                                )
-                                            })}
-                                        </Select>
-                                    </FormControl>
+                                    <div className="py-2 text-base">Paid by</div>
+                                    <div>
+                                        <FormControl fullWidth>
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                value={name}
+                                                onChange={handleChange}
+                                            >
+                                                {['Sanjay', 'Saran', 'Gowtham', 'Naveen']?.map((ele, index) => {
+                                                    return (
+                                                        <MenuItem key={index} value={index}>{ele}</MenuItem>
+                                                    )
+                                                })}
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="py-2 text-base">Title</div>
+                                    <div><TextField value={spentFor} onChange={(evt) => setSpendFor(evt?.target.value)} fullWidth /></div>
+                                </div>
+                                <div>
+                                    <div className="py-2 text-base">Date</div>
+                                    <input type="date" name="" id="" className=" rounded-[4px] w-full py-4 px-2" style={{ borderColor: 'rgba(0, 0, 0, 0.23)', borderWidth: '1px' }} />
                                 </div>
                             </div>
-                            <div>
-                                <div>Title</div>
-                                <div><TextField value={spentFor} onChange={(evt) => setSpendFor(evt?.target.value)} fullWidth /></div>
-                            </div>
-                            <div>
-                                <div>Date</div>
-                                <input type="date" name="" id="" className=" rounded-[4px] w-full py-4 px-2" style={{borderColor: 'rgba(0, 0, 0, 0.23)',borderWidth:'1px'}} />
-                            </div>
                             <div className="flex items-center mt-4 shadow-md">
-                                <div className="text-red-500 text-lg w-[50%] text-center p-2">Cancel</div>
-                                <div className="bg-blue-500 text-white text-lg w-[50%] text-center p-2">Save</div>
+                                <div className="text-red-500 text-lg w-[50%] text-center p-2.5" onClick={() => setOpen(false)}>Cancel</div>
+                                <div className="bg-blue-500 text-white text-lg w-[50%] text-center p-2.5">Save</div>
                             </div>
                         </div>
                     </Drawer>
+                    <Dialog open={deleteSpend} onClose={() => setDeleteSpend(false)} className="rounded-none">
+                        <div className="p-4">
+                            <div>
+                                <div className="flex flex-start gap-2 text-lg">Are you sure going to delete this <div className="text-blue-500 italic">Food</div> expense ?</div>
+                            </div>
+                            <div className="flex justify-end gap-4 py-4 text-lg">
+                                <div className="text-blue-500 cursor-pointer" onClick={() => setDeleteSpend(false)}>No</div>
+                                <div className="text-red-500 cursor-pointer">Yes</div>
+                            </div>
+                        </div>
+                    </Dialog>
                 </div>
             </div>
 
@@ -220,7 +228,7 @@ const Groups = () => {
                                             </div>
                                             <div>
                                                 <div className="text-blue-500 cursor-pointer" onClick={() => setOpen(true)}>Edit</div>
-                                                <div className="text-red-500 cursor-pointer">Delete</div>
+                                                <div className="text-red-500 cursor-pointer" onClick={() => setDeleteSpend(true)}>Delete</div>
                                             </div>
                                         </div>
                                     </div>
