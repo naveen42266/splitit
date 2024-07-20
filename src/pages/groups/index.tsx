@@ -181,7 +181,7 @@ const Groups = () => {
                                 </div>
                                 <div>
                                     <div className="py-2 text-base">Date</div>
-                                    <input type="date" name="" id="" className=" rounded-[4px] w-full py-4 px-2" style={{ borderColor: 'rgba(0, 0, 0, 0.23)', borderWidth: '1px' }} />
+                                    <input type="date" name="" id="" className=" rounded-[4px] w-full py-4 px-2 bg-white" style={{ borderColor: 'rgba(0, 0, 0, 0.23)', borderWidth: '1px' }} />
                                 </div>
                             </div>
                             <div className="flex items-center mt-4 shadow-md">
@@ -193,7 +193,8 @@ const Groups = () => {
                     <Dialog open={deleteSpend} onClose={() => setDeleteSpend(false)} className="rounded-none">
                         <div className="p-4">
                             <div>
-                                <div className="flex flex-start gap-2 text-lg">Are you sure going to delete this <div className="text-blue-500 italic">Food</div> expense ?</div>
+                               {width < 768 && <div className="text-lg"> Are you sure going to delete this {'Food'} expense ?</div>}
+                               { width >= 768 && <div className="flex flex-start gap-2 text-lg">Are you sure going to delete this <div className="text-blue-500 italic">{'Food'}</div> expense ?</div>}
                             </div>
                             <div className="flex justify-end gap-4 py-4 text-lg">
                                 <div className="text-blue-500 cursor-pointer" onClick={() => setDeleteSpend(false)}>No</div>
