@@ -146,7 +146,7 @@ const Groups = () => {
                         ))}
                     </Tabs>
                 </div>
-                <div className="h-[91%] overflow-y-scroll relative">
+                <div className="h-[56%] overflow-y-scroll relative"> {/*91%*/}
                     {handleTabContent()}
                     <Drawer anchor={width >= 768 ? "right" : "bottom"} open={open?.isOpen} onClose={() => setOpen({ ...open, isOpen: false, type: '' })} className={`${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
                         <div className={`${width >= 768 && 'w-[500px] h-full flex flex-col justify-between'} ${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
@@ -241,7 +241,7 @@ const Groups = () => {
                                 </div>
                             )
                         })}
-                        <div className="h-40"></div>
+                        <div className="h-96"></div>
                     </div>
                 </div>
             }
