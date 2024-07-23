@@ -9,75 +9,69 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Modal from '@mui/material/Modal';
 import CreateGroup from "../../components/createGroup";
+import moment from "moment";
 const list = [
     {
         name: 'sanjay',
-        month: 'jul',
-        date: '20',
+        isoDate: '2024-07-20 24:00:00.000',
         for: 'break fast',
         paidAmt: '500'
     }, {
         name: 'saran',
-        month: 'jul',
-        date: '20',
+        isoDate: '2024-07-20 24:00:00.000',
         for: 'lunch',
         paidAmt: '1500'
     },
     {
         name: 'sanjay',
-        month: 'jul',
-        date: '19',
+        isoDate: '2024-07-19 24:00:00.000',
         for: 'room rent',
         paidAmt: '5500'
     }, {
         name: 'saran',
-        month: 'jul',
-        date: '19',
+        isoDate: '2024-07-19 24:00:00.000',
         for: 'W***y',
         paidAmt: '3500'
     },
     {
         name: 'naveen',
-        month: 'jul',
-        date: '18',
+        isoDate: '2024-07-18 24:00:00.000',
         for: 'chicken',
         paidAmt: '400'
     },
     {
         name: 'gowtham',
-        month: 'jul',
-        date: '18',
+        isoDate: '2024-07-18 24:00:00.000',
         for: 'dinner',
         paidAmt: '400'
     },
     {
         name: 'gowtham',
-        month: 'jul',
-        date: '17',
+        isoDate: '2024-07-17 24:00:00.000',
         for: 'snacks',
         paidAmt: '400'
     },
     {
         name: 'naveen',
-        month: 'jul',
-        date: '17',
+        isoDate: '2024-07-17 24:00:00.000',
         for: 'juice',
         paidAmt: '400'
     }
 ]
 const Groups = () => {
     const groups = [{ id: '1', name: 'kodaikanal dairy' }];
+    let members = ['Sanjay', 'Saran', 'Gowtham', 'Naveen'];
     const tabs = ['Settle Up', 'Balance', 'Total', 'Convert to USD',];
     const [createGroup, setCreateGroup] = useState(false);
     const [width, setWidth] = useState(0);
     const [group, setGroup] = useState('');
     const [tab, setTab] = useState<any>('Settle Up');
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState({ isOpen: false, type: '', name: '', title: '', amount: '', date: '' });
     const [deleteSpend, setDeleteSpend] = useState(false);
     const [name, setName] = React.useState('0');
     const [spentFor, setSpendFor] = useState('Food');
     const handleChange = (event: SelectChangeEvent) => {
-        setName(event.target.value as string);
+        setOpen({ ...open, name: event.target.value as string });
     };
     function handleList(newGroup: boolean, group: number) {
         if (newGroup) {
@@ -119,6 +113,8 @@ const Groups = () => {
         </div>
     }
 
+    console.log(open?.name)
+
     function handleDetailScreen() {
         if (((width >= 768) || (groups?.length == 0 && width < 768 && !createGroup)) && group == '') {
             return <div className={`flex flex-col justify-between items-center h-[300px] w-full my-20 md:my-30 `}>
@@ -150,12 +146,12 @@ const Groups = () => {
                         ))}
                     </Tabs>
                 </div>
-                <div className="h-[91%] overflow-y-scroll">
+                <div className="h-[91%] overflow-y-scroll relative">
                     {handleTabContent()}
-                    <Drawer anchor={width >= 768 ? "right" : "bottom"} open={open} onClose={() => setOpen(false)} className={`${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
+                    <Drawer anchor={width >= 768 ? "right" : "bottom"} open={open?.isOpen} onClose={() => setOpen({ ...open, isOpen: false, type: '' })} className={`${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
                         <div className={`${width >= 768 && 'w-[500px] h-full flex flex-col justify-between'} ${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
                             <div className="p-4">
-                                <div className="text-lg">Edit Split details</div>
+                                <div className="text-lg">{open?.type} Split details</div>
                                 <div>
                                     <div className="py-2 text-base">Paid by</div>
                                     <div>
@@ -163,10 +159,10 @@ const Groups = () => {
                                             <Select
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
-                                                value={name}
+                                                value={open?.type === 'Edit' ?  members?.findIndex((ele, index) => ele?.toLowerCase() === open?.name?.toLowerCase() ?? index).toString() : open.name}
                                                 onChange={handleChange}
                                             >
-                                                {['Sanjay', 'Saran', 'Gowtham', 'Naveen']?.map((ele, index) => {
+                                                {members?.map((ele, index) => {
                                                     return (
                                                         <MenuItem key={index} value={index}>{ele}</MenuItem>
                                                     )
@@ -177,15 +173,19 @@ const Groups = () => {
                                 </div>
                                 <div>
                                     <div className="py-2 text-base">Title</div>
-                                    <div><TextField value={spentFor} onChange={(evt) => setSpendFor(evt?.target.value)} fullWidth /></div>
+                                    <div><TextField value={open.title} onChange={(evt) => setOpen({ ...open, title: evt.target.value })} fullWidth /></div>
+                                </div>
+                                <div>
+                                    <div className="py-2 text-base">Amount Spend</div>
+                                    <div><TextField value={open.amount} onChange={(evt) => setOpen({ ...open, amount: evt.target.value })} fullWidth /></div>
                                 </div>
                                 <div>
                                     <div className="py-2 text-base">Date</div>
-                                    <input type="date" name="" id="" className=" rounded-[4px] w-full py-4 px-2 bg-white" style={{ borderColor: 'rgba(0, 0, 0, 0.23)', borderWidth: '1px' }} />
+                                    <input type="date" name="" id="" className=" rounded-[4px] w-full py-4 px-2 bg-white" style={{ borderColor: 'rgba(0, 0, 0, 0.23)', borderWidth: '1px' }} value={open.date} onChange={(evt) => setOpen({ ...open, date: evt?.target.value })} />
                                 </div>
                             </div>
                             <div className="flex items-center mt-4 shadow-md">
-                                <div className="text-red-500 text-lg w-[50%] text-center p-2.5" onClick={() => setOpen(false)}>Cancel</div>
+                                <div className="text-red-500 text-lg w-[50%] text-center p-2.5" onClick={() => setOpen({ ...open, isOpen: false, type: '' })}>Cancel</div>
                                 <div className="bg-blue-500 text-white text-lg w-[50%] text-center p-2.5">Save</div>
                             </div>
                         </div>
@@ -193,8 +193,8 @@ const Groups = () => {
                     <Dialog open={deleteSpend} onClose={() => setDeleteSpend(false)} className="rounded-none">
                         <div className="p-4">
                             <div>
-                               {width < 768 && <div className="text-lg"> Are you sure going to delete this {'Food'} expense ?</div>}
-                               { width >= 768 && <div className="flex flex-start gap-2 text-lg">Are you sure going to delete this <div className="text-blue-500 italic">{'Food'}</div> expense ?</div>}
+                                {width < 768 && <div className="text-lg"> Are you sure going to delete this {'Food'} expense ?</div>}
+                                {width >= 768 && <div className="flex flex-start gap-2 text-lg">Are you sure going to delete this <div className="text-blue-500 italic">{'Food'}</div> expense ?</div>}
                             </div>
                             <div className="flex justify-end gap-4 py-4 text-lg">
                                 <div className="text-blue-500 cursor-pointer" onClick={() => setDeleteSpend(false)}>No</div>
@@ -202,6 +202,7 @@ const Groups = () => {
                             </div>
                         </div>
                     </Dialog>
+                    <div className={`fixed bottom-5 ${width >= 768 ? 'right-10 p-2' : 'right-6 p-1'} z-10 bg-blue-500 rounded-lg text-white cursor-pointer`} onClick={() => setOpen({ ...open, isOpen: true, type: 'Create', name: '0', title: '', amount: '', date: '' })}><AddIcon /></div>
                 </div>
             </div>
 
@@ -219,8 +220,8 @@ const Groups = () => {
                                 <div key={index} className={`hover:bg-[#f0f2f5] ${index == 0 && 'mt-2'} `}>
                                     <div className="flex justify-start py-3 mx-4">
                                         <div className="w-[10%] text-slate-500">
-                                            <div className="capitalize">{ele?.month}</div>
-                                            <div>{ele?.date}</div>
+                                            <div className="capitalize">{moment(ele?.isoDate).format('MMM ')}</div>
+                                            <div>{moment(ele?.isoDate).format('DD')}</div>
                                         </div>
                                         <div className="flex justify-between w-[90%]">
                                             <div>
@@ -228,7 +229,7 @@ const Groups = () => {
                                                 <div className="capitalize">{ele?.name} paid {ele?.paidAmt}</div>
                                             </div>
                                             <div>
-                                                <div className="text-blue-500 cursor-pointer" onClick={() => setOpen(true)}>Edit</div>
+                                                <div className="text-blue-500 cursor-pointer" onClick={() => setOpen({ ...open, isOpen: true, type: 'Edit', name: ele?.name, amount: ele.paidAmt, title: ele.for, date: moment(ele.isoDate).format('YYYY-MM-DD') })}>Edit</div>
                                                 <div className="text-red-500 cursor-pointer" onClick={() => setDeleteSpend(true)}>Delete</div>
                                             </div>
                                         </div>
@@ -240,7 +241,7 @@ const Groups = () => {
                                 </div>
                             )
                         })}
-                        <div className="h-20"></div>
+                        <div className="h-40"></div>
                     </div>
                 </div>
             }
