@@ -8,15 +8,18 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Modal from '@mui/material/Modal';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CreateGroup from "../../components/createGroup";
 import moment from "moment";
-const list = [
+const SettleUp = [
     {
         name: 'sanjay',
         isoDate: '2024-07-20 24:00:00.000',
         for: 'break fast',
         paidAmt: '500'
-    }, {
+    },
+    {
         name: 'saran',
         isoDate: '2024-07-20 24:00:00.000',
         for: 'lunch',
@@ -58,18 +61,49 @@ const list = [
         paidAmt: '400'
     }
 ]
+const Total = [
+    {
+        name: 'sanjay',
+        spend: 6024,
+        get: 2000,
+        give: 0,
+        settled: false,
+    },
+    {
+        name: 'saran',
+        spend: 4124,
+        get: 100,
+        give: 0,
+        settled: false,
+    },
+    {
+        name: 'gowtham',
+        spend: 1100,
+        get: 0,
+        give: 2000,
+        settled: false,
+    },
+    {
+        name: 'naveen',
+        spend: 0,
+        get: 0,
+        give: 3000,
+        settled: false,
+    },
+]
+const Export = ['Image', 'Pdf', 'Excel(CSV)'];
 const Groups = () => {
     const groups = [{ id: '1', name: 'kodaikanal dairy' }];
     let members = ['Sanjay', 'Saran', 'Gowtham', 'Naveen'];
-    const tabs = ['Settle Up', 'Balance', 'Total', 'Convert to USD',];
+    const tabs = ['Settle Up', 'Balance', 'Total', 'Export',];
     const [createGroup, setCreateGroup] = useState(false);
     const [width, setWidth] = useState(0);
     const [group, setGroup] = useState('');
     const [tab, setTab] = useState<any>('Settle Up');
     const [open, setOpen] = useState({ isOpen: false, type: '', name: '', title: '', amount: '', date: '' });
     const [deleteSpend, setDeleteSpend] = useState(false);
-    const [name, setName] = React.useState('0');
-    const [spentFor, setSpendFor] = useState('Food');
+    const [total, setTotal] = useState(Total);
+    const [accordion, setAccordion] = useState('')
     const handleChange = (event: SelectChangeEvent) => {
         setOpen({ ...open, name: event.target.value as string });
     };
@@ -146,7 +180,7 @@ const Groups = () => {
                         ))}
                     </Tabs>
                 </div>
-                <div className="h-[56%] overflow-y-scroll relative"> {/*91%*/}
+                <div className="h-[559px] overflow-y-scroll relative"> {/*full 91%*/}
                     {handleTabContent()}
                     <Drawer anchor={width >= 768 ? "right" : "bottom"} open={open?.isOpen} onClose={() => setOpen({ ...open, isOpen: false, type: '' })} className={`${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
                         <div className={`${width >= 768 && 'w-[500px] h-full flex flex-col justify-between'} ${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
@@ -159,7 +193,7 @@ const Groups = () => {
                                             <Select
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
-                                                value={open?.type === 'Edit' ?  members?.findIndex((ele, index) => ele?.toLowerCase() === open?.name?.toLowerCase() ?? index).toString() : open.name}
+                                                value={open?.type === 'Edit' ? members?.findIndex((ele, index) => ele?.toLowerCase() === open?.name?.toLowerCase() ?? index).toString() : open.name}
                                                 onChange={handleChange}
                                             >
                                                 {members?.map((ele, index) => {
@@ -215,7 +249,7 @@ const Groups = () => {
                 return <div className="my-4">
                     <div className="text-sm font-semibold mx-4">July 2024</div>
                     <div className="">
-                        {list?.map((ele, index) => {
+                        {SettleUp?.map((ele, index) => {
                             return (
                                 <div key={index} className={`hover:bg-[#f0f2f5] ${index == 0 && 'mt-2'} `}>
                                     <div className="flex justify-start py-3 mx-4">
@@ -246,13 +280,63 @@ const Groups = () => {
                 </div>
             }
             else if (tab == 'Balance') {
-                return <div className="m-4">Balance</div>
+                return <div className="my-4">
+                    <div className="text-sm font-semibold mx-4 my-2">Balance</div>
+                    <div>
+                        {Total?.map((ele, index) => {
+                            return (
+                                <div key={index} className="flex justify-between items-center gap-3 px-3 py-2 hover:bg-[#f0f2f5]" onClick={() => { }}>
+                                    <div className="flex items-center gap-3">
+                                        <Avatar alt={ele?.name?.toUpperCase()} src={'dd'} sx={{ width: "42px", height: "42px" }} />
+                                        <div>{ele?.name} {ele?.get > 0 ? ' gets back ' + '₹' + ele?.get : 'need to give ' + '₹' + ele?.give} in total</div>
+                                    </div>
+                                    <div>
+                                        {ele?.name === accordion ? <KeyboardArrowUpIcon onClick={() => setAccordion('')} /> : <KeyboardArrowDownIcon onClick={() => setAccordion(ele?.name)} />}
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
             }
             else if (tab == 'Total') {
-                return <div className="m-4">Total</div>
+                return <div className="my-4">
+                    <div className="text-sm font-semibold mx-4">Total Amount Spend in the group</div>
+                    <div className="px-4 py-2">
+                        <div>TOTAL GROUP SPENDING</div>
+                        <div className="text-xl text-blue-500">₹{30000}</div>
+                    </div>
+                    <div className="px-4 py-2">
+                        <div>TOTAL YOU SPENDING</div>
+                        <div className="text-xl text-blue-500">₹{10000}</div>
+                    </div>
+                    <div className="px-4 py-2">
+                        <div>YOUR TOTAL SHARE </div>
+                        <div className="text-xl text-blue-500">₹{8000}</div>
+                    </div>
+                </div>
             }
-            else if (tab == 'Convert to USD') {
-                return <div className="m-4">Convert to USD</div>
+            else if (tab == 'Export') {
+                return <div className="my-4">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full bg-white border border-gray-200">
+                            <thead className="bg-gray-200">
+                                <tr>
+                                    <th className="py-2 px-4 border-b">Type</th>
+                                    <th className="py-2 px-4 border-b">Download</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {Export.map((ele, index) => (
+                                    <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                                        <td className="py-2 px-4 border-b text-center">{ele}</td>
+                                        <td className="py-2 px-4 border-b text-center"><button className="text-sm font-semibold mx-4 bg-blue-500 text-white px-4 py-1 rounded-md">Download</button>                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             }
         }
         // 1st if condition ${((width >= 768) || (groups?.length == 0 && width < 768 && !createGroup)) &&  group == '' ? 'block' : 'hidden'}`}
