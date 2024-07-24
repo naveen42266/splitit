@@ -19,7 +19,7 @@ export default function Blogs() {
       <div className='bg-white'>
         {blog?.map((each) => {
           return (
-            <div key={each} className={`flex w-full px-[20px] md:px-[160px] ${each == blog.length ? 'py-[50px]' : 'pt-[50px]'} `}>
+            <div key={each} className={`flex w-full px-[20px] md:px-[160px] ${each == blog.length ? 'py-[50px]' : each == 1 ? 'pt-[30px]' : 'pt-[50px]'} `}>
               <div className='w-[40%] hidden lg:block'><img className='w-full h-[360px] object-center' loading="lazy" src="https://cdn.mos.cms.futurecdn.net/Wh46bS2Gw8vUC6iQh2wEd6-1200-80.png" alt="" /></div>
               <div className='bg-[white] py-6 px-8 w-full lg:w-[60%] flex flex-col justify-between border border-gray-400'>
                 <div>
