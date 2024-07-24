@@ -3,7 +3,7 @@ import Navbar from "../components/navbar";
 export default function Home() {
   //width={'500px'} height={'610px'}
   return (
-    <div>
+    <div className="noSelect">
       <Navbar />
       <div className="flex flex-col-reverse md:flex-row justify-center items-center">
         <img src="https://settleup.io/images/img-devices.png" alt="demo" className="m-5 md:my-20 md:ml-20 h-[300px] w-[250px] lg:w-[500px] lg:h-[610px]" />

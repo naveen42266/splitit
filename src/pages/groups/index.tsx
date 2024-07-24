@@ -96,30 +96,42 @@ const Total = [
 const Export = ['Image', 'Pdf', 'Excel(CSV)'];
 const Groups = () => {
     const groups = [{ id: '1', name: 'kodaikanal dairy' }];
-    let members = ['Sanjay', 'Saran', 'Gowtham', 'Naveen'];
+    const members = ['Sanjay', 'Saran', 'Gowtham', 'Naveen'];
     const tabs = ['Settle Up', 'Balance', 'Total', 'Export',];
     const [createGroup, setCreateGroup] = useState(false);
     const [width, setWidth] = useState(0);
     const [group, setGroup] = useState('');
-    const [tab, setTab] = useState<any>('1');
+    const [tab, setTab] = useState<any>(1);
     const [open, setOpen] = useState({ isOpen: false, type: '', name: '', title: '', amount: '', date: '' });
     const [deleteSpend, setDeleteSpend] = useState(false);
     const [total, setTotal] = useState(Total);
     const [accordion, setAccordion] = useState('')
 
     const handlers = useSwipeable({
-        onSwiped: (eventData) => {
-            if (eventData?.dir === 'Left') {
-                if (tab >= 1 && tab < 4) {
-                    setTab(tab + 1)
-                }
+        // onSwiped: (eventData) => {
+        //     if (eventData?.dir === 'Left') {
+        //         if (tab >= 1 && tab < 4) {
+        //             setTab(tab + 1)
+        //         }
+        //     }
+        //     else if (eventData?.dir === 'Right') {
+        //         if (tab > 1 && tab <= 4) {
+        //             setTab(tab - 1)
+        //         }
+        //     }
+        // },
+        preventScrollOnSwipe: true,
+        trackMouse: true,
+        onSwipedLeft: () => {
+            if (tab >= 1 && tab < 4) {
+                setTab(tab + 1)
             }
-            else if (eventData?.dir === 'Right') {
-                if (tab > 1 && tab <= 4) {
-                    setTab(tab - 1)
-                }
+        },
+        onSwipedRight: () => {
+            if (tab > 1 && tab <= 4) {
+                setTab(tab - 1)
             }
-        }
+        },
     });
 
     const handleChangeTabs = (value: string) => {
@@ -129,7 +141,7 @@ const Groups = () => {
             }
         })
     }
-
+    
     const handleChange = (event: SelectChangeEvent) => {
         setOpen({ ...open, name: event.target.value as string });
     };
@@ -205,7 +217,7 @@ const Groups = () => {
                     </Tabs>
                 </div>
                 <div className="h-[559px] overflow-y-scroll relative"> {/*full 91%*/}
-                    <div {...handlers}>
+                    <div {...handlers} className="h-full w-full">
                         {handleTabContent()}
                     </div>
                     <Drawer anchor={width >= 768 ? "right" : "bottom"} open={open?.isOpen} onClose={() => setOpen({ ...open, isOpen: false, type: '' })} className={`${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
@@ -271,7 +283,7 @@ const Groups = () => {
             return <div className={``}>{groupsList()}</div>
         }
         function handleTabContent() {
-            if (tab == '1') {
+            if (tab == 1) {
                 return <div className="my-4">
                     <div className="text-sm font-semibold mx-4">July 2024</div>
                     <div className="">
@@ -305,7 +317,7 @@ const Groups = () => {
                     </div>
                 </div>
             }
-            else if (tab == '2') {
+            else if (tab == 2) {
                 return <div className="my-4">
                     <div className="text-sm font-semibold mx-4 my-2">Balance</div>
                     <div>
@@ -325,7 +337,7 @@ const Groups = () => {
                     </div>
                 </div>
             }
-            else if (tab == '3') {
+            else if (tab == 3) {
                 return <div className="my-4">
                     <div className="text-sm font-semibold mx-4">Total Amount Spend in the group</div>
                     <div className="px-4 py-2">
@@ -342,7 +354,7 @@ const Groups = () => {
                     </div>
                 </div>
             }
-            else if (tab == '4') {
+            else if (tab == 4) {
                 return <div className="my-4">
                     <div className="overflow-x-auto">
                         <table className="min-w-full bg-white border border-gray-200">
@@ -378,7 +390,7 @@ const Groups = () => {
         }
     }, []);
     return (
-        <div className="h-screen w-full overflow-y-hidden">
+        <div className="h-screen w-full overflow-y-hidden noSelect">
             <Navbar />
             <div className="flex relative">
                 <div className={`${createGroup || groups?.length >= 1 ? 'w-[30%] hidden md:block mt-10 ml-8' : 'hidden'}`}>{handleList(createGroup, groups?.length)}</div>

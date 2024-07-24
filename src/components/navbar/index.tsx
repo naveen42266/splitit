@@ -3,11 +3,16 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from 'next/router';
 const Navbar = () => {
-    const navList = ['Groups', 'Tips', 'Blogs', 'Support']
+    const navList = ['Home','Groups', 'Tips', 'Blogs', 'Support']
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
     function handleRoute(path: string) {
-        router.push("/" + path)
+        if(path == 'home'){
+           router.push('/')
+        }
+        else{
+            router.push("/" + path)
+        }
     }
     return (
         <nav className="bg-blue-500 p-4">
