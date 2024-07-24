@@ -12,6 +12,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CreateGroup from "../../components/createGroup";
 import moment from "moment";
+import { useSwipeable } from 'react-swipeable';
+
 const SettleUp = [
     {
         name: 'sanjay',
@@ -99,11 +101,35 @@ const Groups = () => {
     const [createGroup, setCreateGroup] = useState(false);
     const [width, setWidth] = useState(0);
     const [group, setGroup] = useState('');
-    const [tab, setTab] = useState<any>('Settle Up');
+    const [tab, setTab] = useState<any>('1');
     const [open, setOpen] = useState({ isOpen: false, type: '', name: '', title: '', amount: '', date: '' });
     const [deleteSpend, setDeleteSpend] = useState(false);
     const [total, setTotal] = useState(Total);
     const [accordion, setAccordion] = useState('')
+
+    const handlers = useSwipeable({
+        onSwiped: (eventData) => {
+            if (eventData?.dir === 'Left') {
+                if (tab >= 1 && tab < 4) {
+                    setTab(tab + 1)
+                }
+            }
+            else if (eventData?.dir === 'Right') {
+                if (tab > 1 && tab <= 4) {
+                    setTab(tab - 1)
+                }
+            }
+        }
+    });
+
+    const handleChangeTabs = (value: string) => {
+        tabs?.map((ele, index) => {
+            if (ele === value) {
+                setTab(index + 1)
+            }
+        })
+    }
+
     const handleChange = (event: SelectChangeEvent) => {
         setOpen({ ...open, name: event.target.value as string });
     };
@@ -147,8 +173,6 @@ const Groups = () => {
         </div>
     }
 
-    console.log(open?.name)
-
     function handleDetailScreen() {
         if (((width >= 768) || (groups?.length == 0 && width < 768 && !createGroup)) && group == '') {
             return <div className={`flex flex-col justify-between items-center h-[300px] w-full my-20 md:my-30 `}>
@@ -170,8 +194,8 @@ const Groups = () => {
                     </div>
                     <Tabs
                         className="border-b border-slate-300"
-                        value={tab}
-                        onChange={(event: React.SyntheticEvent, newValue: any) => setTab(newValue)}
+                        value={tabs[tab - 1]}
+                        onChange={(event: React.SyntheticEvent, newValue: any,) => handleChangeTabs(newValue)}
                         aria-label="basic tabs example"
                         sx={{ minWidth: '50px' }}
                     >
@@ -181,7 +205,9 @@ const Groups = () => {
                     </Tabs>
                 </div>
                 <div className="h-[559px] overflow-y-scroll relative"> {/*full 91%*/}
-                    {handleTabContent()}
+                    <div {...handlers}>
+                        {handleTabContent()}
+                    </div>
                     <Drawer anchor={width >= 768 ? "right" : "bottom"} open={open?.isOpen} onClose={() => setOpen({ ...open, isOpen: false, type: '' })} className={`${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
                         <div className={`${width >= 768 && 'w-[500px] h-full flex flex-col justify-between'} ${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
                             <div className="p-4">
@@ -236,7 +262,7 @@ const Groups = () => {
                             </div>
                         </div>
                     </Dialog>
-                    <div className={`fixed bottom-5 ${width >= 768 ? 'right-10 p-2' : 'right-6 p-1'} z-10 bg-blue-500 rounded-lg text-white cursor-pointer`} onClick={() => setOpen({ ...open, isOpen: true, type: 'Create', name: '0', title: '', amount: '', date: '' })}><AddIcon /></div>
+                    <div className={`${tab == '1' ? 'block' : 'hidden'} fixed bottom-5 ${width >= 768 ? 'right-10 p-2' : 'right-6 p-1'} z-10 bg-blue-500 rounded-lg text-white cursor-pointer`} onClick={() => setOpen({ ...open, isOpen: true, type: 'Create', name: '0', title: '', amount: '', date: '' })}><AddIcon /></div>
                 </div>
             </div>
 
@@ -245,7 +271,7 @@ const Groups = () => {
             return <div className={``}>{groupsList()}</div>
         }
         function handleTabContent() {
-            if (tab == 'Settle Up') {
+            if (tab == '1') {
                 return <div className="my-4">
                     <div className="text-sm font-semibold mx-4">July 2024</div>
                     <div className="">
@@ -279,7 +305,7 @@ const Groups = () => {
                     </div>
                 </div>
             }
-            else if (tab == 'Balance') {
+            else if (tab == '2') {
                 return <div className="my-4">
                     <div className="text-sm font-semibold mx-4 my-2">Balance</div>
                     <div>
@@ -287,7 +313,7 @@ const Groups = () => {
                             return (
                                 <div key={index} className="flex justify-between items-center gap-3 px-3 py-2 hover:bg-[#f0f2f5]" onClick={() => { }}>
                                     <div className="flex items-center gap-3">
-                                        <Avatar alt={ele?.name?.toUpperCase()} src={'dd'} sx={{ width: "42px", height: "42px" }} />
+                                        <Avatar alt={ele?.name?.toUpperCase()} src={'..'} sx={{ width: "42px", height: "42px" }} />
                                         <div>{ele?.name} {ele?.get > 0 ? ' gets back ' + '₹' + ele?.get : 'need to give ' + '₹' + ele?.give} in total</div>
                                     </div>
                                     <div>
@@ -299,7 +325,7 @@ const Groups = () => {
                     </div>
                 </div>
             }
-            else if (tab == 'Total') {
+            else if (tab == '3') {
                 return <div className="my-4">
                     <div className="text-sm font-semibold mx-4">Total Amount Spend in the group</div>
                     <div className="px-4 py-2">
@@ -316,7 +342,7 @@ const Groups = () => {
                     </div>
                 </div>
             }
-            else if (tab == 'Export') {
+            else if (tab == '4') {
                 return <div className="my-4">
                     <div className="overflow-x-auto">
                         <table className="min-w-full bg-white border border-gray-200">
