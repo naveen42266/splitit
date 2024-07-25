@@ -64,8 +64,10 @@ const tips = [
 export default function Tips() {
   //width={'500px'} height={'610px'}
   return (
-    <div className="">
-      <Navbar />
+    <div className="relative">
+      <div className="sticky top-0 left-0 right-0">
+        <Navbar />
+      </div>
       <div className="p-5">
         <div className="text-4xl pt-3">Settle Up Tips</div>
         {tips?.map((each, index) => {
