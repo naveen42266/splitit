@@ -141,10 +141,18 @@ const Groups = () => {
             }
         })
     }
-    
+
     const handleChange = (event: SelectChangeEvent) => {
         setOpen({ ...open, name: event.target.value as string });
     };
+
+    const handleMember = (name: string): string => {
+        const result = members?.findIndex(
+            (each) => each?.toLowerCase() === name?.toLowerCase()
+        );
+        return result !== -1 ? `${result}` : '';
+    }
+
     function handleList(newGroup: boolean, group: number) {
         if (newGroup) {
             return <CreateGroup handleBack={(back: boolean) => { setCreateGroup(back) }} />
@@ -231,7 +239,7 @@ const Groups = () => {
                                             <Select
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
-                                                value={open?.type === 'Edit' ? members?.findIndex((ele, index) => ele?.toLowerCase() === open?.name?.toLowerCase() ?? index).toString() : open.name}
+                                                value={open.name}
                                                 onChange={handleChange}
                                             >
                                                 {members?.map((ele, index) => {
@@ -301,7 +309,7 @@ const Groups = () => {
                                                 <div className="capitalize">{ele?.name} paid {ele?.paidAmt}</div>
                                             </div>
                                             <div>
-                                                <div className="text-blue-500 cursor-pointer" onClick={() => setOpen({ ...open, isOpen: true, type: 'Edit', name: ele?.name, amount: ele.paidAmt, title: ele.for, date: moment(ele.isoDate).format('YYYY-MM-DD') })}>Edit</div>
+                                                <div className="text-blue-500 cursor-pointer" onClick={() => setOpen({ ...open, isOpen: true, type: 'Edit', name: handleMember(ele?.name), amount: ele.paidAmt, title: ele.for, date: moment(ele.isoDate).format('YYYY-MM-DD') })}>Edit</div>
                                                 <div className="text-red-500 cursor-pointer" onClick={() => setDeleteSpend(true)}>Delete</div>
                                             </div>
                                         </div>
