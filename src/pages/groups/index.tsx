@@ -7,9 +7,10 @@ import { Dialog, Drawer, Tab, Tabs, TextField } from "@mui/material";
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Modal from '@mui/material/Modal';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import CloseIcon from '@mui/icons-material/Close';
 import CreateGroup from "../../components/createGroup";
 import moment from "moment";
 import { useSwipeable } from 'react-swipeable';
@@ -94,16 +95,19 @@ const Total = [
     },
 ]
 const Export = ['Image', 'Pdf', 'Excel(CSV)'];
+const defaultMembers = ['sanjay', 'saran', 'gowtham', 'naveen'];
 const Groups = () => {
     const groups = [{ id: '1', name: 'kodaikanal dairy' }];
-    const members = ['Sanjay', 'Saran', 'Gowtham', 'Naveen'];
+    const [members, setMembers] = useState(defaultMembers)
     const tabs = ['Settle Up', 'Balance', 'Total', 'Export',];
     const [createGroup, setCreateGroup] = useState(false);
     const [width, setWidth] = useState(0);
     const [group, setGroup] = useState('');
     const [tab, setTab] = useState<any>(1);
     const [open, setOpen] = useState({ isOpen: false, type: '', name: '', title: '', amount: '', date: '' });
+    const [addMember, setAddMember] = useState({ isOpen: false, name: '' });
     const [deleteSpend, setDeleteSpend] = useState(false);
+    const [viewMember, setViewMember] = useState(false);
     const [total, setTotal] = useState(Total);
     const [accordion, setAccordion] = useState('')
 
@@ -146,7 +150,13 @@ const Groups = () => {
         setOpen({ ...open, name: event.target.value as string });
     };
 
-    const handleMember = (name: string): string => {
+    const handleAddMember = () => {
+        members?.push(addMember?.name)
+        setMembers(members)
+        setAddMember({ ...addMember, isOpen: false, name: '' })
+    }
+
+    const handleName = (name: string): string => {
         const result = members?.findIndex(
             (each) => each?.toLowerCase() === name?.toLowerCase()
         );
@@ -179,7 +189,7 @@ const Groups = () => {
                                 <div className="flex">
                                     <div className="text-[#111b21] text-[17px]">{each?.name}</div>
                                 </div>
-                                <div className="text-[#667781] text-xs">{'4'} members</div>
+                                <div className="text-[#667781] text-xs">{members?.length} members</div>
                             </div>
                             <div className="flex flex-col justify-center items-center my-5  rounded-full">
                                 <span className="text-blue-500 px-4 py-1 cursor-pointer">Total : {'15000'}</span>
@@ -204,13 +214,16 @@ const Groups = () => {
         else if (group != '') {
             return <div className="relative h-[88%] w-full">
                 <div className="sticky top-0 left-0 right-0">
-                    <div className="flex items-center gap-3 px-3 py-2 bg-[#f0f2f5]" onClick={() => { }}>
-                        <ArrowBackIcon className="block md:hidden" onClick={() => setGroup('')} />
-                        <Avatar alt="Naveen" src={''} sx={{ width: "42px", height: "42px" }} />
-                        <div>
-                            <div>{groups?.find((ele) => ele?.id == group)?.name}</div>
-                            <div className="text-sm text-[#667781]">4 members</div>
+                    <div className="flex justify-between items-center gap-3 px-3 py-2 bg-[#f0f2f5]" onClick={() => { }}>
+                        <div className="flex items-center gap-3">
+                            <ArrowBackIcon className="block md:hidden" onClick={() => setGroup('')} />
+                            <Avatar alt="Naveen" src={''} sx={{ width: "42px", height: "42px" }} />
+                            <div>
+                                <div>{groups?.find((ele) => ele?.id == group)?.name}</div>
+                                <div className="text-sm text-[#667781]" onClick={() => setViewMember(true)}>{members?.length} members</div>
+                            </div>
                         </div>
+                        <button className="bg-blue-500 text-white py-1.5 px-2 rounded-full" onClick={() => setAddMember({ ...addMember, isOpen: true, name: '' })} ><PersonAddIcon /></button>
                     </div>
                     <Tabs
                         className="border-b border-slate-300"
@@ -239,12 +252,13 @@ const Groups = () => {
                                             <Select
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
+                                                className="capitalize"
                                                 value={open.name}
                                                 onChange={handleChange}
                                             >
                                                 {members?.map((ele, index) => {
                                                     return (
-                                                        <MenuItem key={index} value={index}>{ele}</MenuItem>
+                                                        <MenuItem key={index} value={index} className="capitalize">{ele}</MenuItem>
                                                     )
                                                 })}
                                             </Select>
@@ -270,6 +284,21 @@ const Groups = () => {
                             </div>
                         </div>
                     </Drawer>
+                    <Drawer anchor={width >= 768 ? "right" : "bottom"} open={addMember?.isOpen} onClose={() => setAddMember({ ...open, isOpen: false, name: '' })} className={`${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
+                        <div className={`${width >= 768 && 'w-[500px] h-full flex flex-col justify-between'} ${width < 768 && 'rounded-tl-lg rounded-tr-lg'}`}>
+                            <div className="p-4">
+                                <div className="text-lg">Add Member</div>
+                                <div>
+                                    <div className="py-2 text-base">Name</div>
+                                    <div><TextField value={addMember.name} onChange={(evt) => setAddMember({ ...addMember, name: evt.target.value })} fullWidth /></div>
+                                </div>
+                            </div>
+                            <div className="flex items-center mt-4 shadow-md">
+                                <div className="text-red-500 text-lg w-[50%] text-center p-2.5" onClick={() => setAddMember({ ...open, isOpen: false, name: '' })}>Cancel</div>
+                                <div className={`${addMember?.name !== '' ? 'bg-blue-500' : 'bg-slate-400'}  text-white text-lg w-[50%] text-center p-2.5`} onClick={handleAddMember}>Save</div>
+                            </div>
+                        </div>
+                    </Drawer>
                     <Dialog open={deleteSpend} onClose={() => setDeleteSpend(false)} className="rounded-none">
                         <div className="p-4">
                             <div>
@@ -279,6 +308,24 @@ const Groups = () => {
                             <div className="flex justify-end gap-4 py-4 text-lg">
                                 <div className="text-blue-500 cursor-pointer" onClick={() => setDeleteSpend(false)}>No</div>
                                 <div className="text-red-500 cursor-pointer">Yes</div>
+                            </div>
+                        </div>
+                    </Dialog>
+                    <Dialog open={viewMember} onClose={() => setViewMember(false)} className="rounded-none">
+                        <div className="h-[250px] md:min-h-[400px] w-[250px] md:min-w-[400px]">
+                            <div className="bg-blue-500 text-white flex items-center gap-3 p-4 sticky top-0 left-0 right-0 z-10">
+                                <CloseIcon className="cursor-pointer" onClick={() => setViewMember(false)}/>
+                                <div>Members</div>
+                            </div>
+                            <div>
+                                {members?.map((each, index) => {
+                                    return (
+                                        <div key={index} className="flex items-center gap-3 px-4 py-2">
+                                            <Avatar alt={each} src={''} sx={{ width: "42px", height: "42px" }} />
+                                            <div className="text-sm text-[#667781] capitalize">{each}</div>
+                                        </div>
+                                    )
+                                })}
                             </div>
                         </div>
                     </Dialog>
@@ -309,7 +356,7 @@ const Groups = () => {
                                                 <div className="capitalize">{ele?.name} paid {ele?.paidAmt}</div>
                                             </div>
                                             <div>
-                                                <div className="text-blue-500 cursor-pointer" onClick={() => setOpen({ ...open, isOpen: true, type: 'Edit', name: handleMember(ele?.name), amount: ele.paidAmt, title: ele.for, date: moment(ele.isoDate).format('YYYY-MM-DD') })}>Edit</div>
+                                                <div className="text-blue-500 cursor-pointer" onClick={() => setOpen({ ...open, isOpen: true, type: 'Edit', name: handleName(ele?.name), amount: ele.paidAmt, title: ele.for, date: moment(ele.isoDate).format('YYYY-MM-DD') })}>Edit</div>
                                                 <div className="text-red-500 cursor-pointer" onClick={() => setDeleteSpend(true)}>Delete</div>
                                             </div>
                                         </div>
