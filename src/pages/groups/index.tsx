@@ -11,6 +11,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CloseIcon from '@mui/icons-material/Close';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CreateGroup from "../../components/createGroup";
 import moment from "moment";
 import { useSwipeable } from 'react-swipeable';
@@ -96,6 +97,7 @@ const Total = [
 ]
 const Export = ['Image', 'Pdf', 'Excel(CSV)'];
 const defaultMembers = ['sanjay', 'saran', 'gowtham', 'naveen'];
+const menuLists = ['Contact info', 'Select messages', 'Close chat', 'Mute notifications', 'Disappearing messages', 'Clear chat', 'Delete chat', 'Report', 'Block']
 const Groups = () => {
     const groups = [{ id: '1', name: 'kodaikanal dairy' }];
     const [members, setMembers] = useState(defaultMembers)
@@ -108,6 +110,7 @@ const Groups = () => {
     const [addMember, setAddMember] = useState({ isOpen: false, name: '' });
     const [deleteSpend, setDeleteSpend] = useState(false);
     const [viewMember, setViewMember] = useState(false);
+    const [isMenu, setIsMenu] = useState(false);
     const [total, setTotal] = useState(Total);
     const [accordion, setAccordion] = useState('')
 
@@ -214,7 +217,7 @@ const Groups = () => {
         else if (group != '') {
             return <div className="relative h-[88%] w-full">
                 <div className="sticky top-0 left-0 right-0">
-                    <div className="flex justify-between items-center gap-3 px-3 py-2 bg-[#f0f2f5]" onClick={() => { }}>
+                    <div className="flex justify-between items-center gap-3 px-3 py-2 bg-[#f0f2f5] relative" onClick={() => { }}>
                         <div className="flex items-center gap-3">
                             <ArrowBackIcon className="block md:hidden" onClick={() => setGroup('')} />
                             <Avatar alt="Naveen" src={''} sx={{ width: "42px", height: "42px" }} />
@@ -223,7 +226,8 @@ const Groups = () => {
                                 <div className="text-sm text-[#667781]" onClick={() => setViewMember(true)}>{members?.length} members</div>
                             </div>
                         </div>
-                        <button className="bg-blue-500 text-white py-1.5 px-2 rounded-full" onClick={() => setAddMember({ ...addMember, isOpen: true, name: '' })} ><PersonAddIcon /></button>
+                        <div className="pb-1 px-1 rounded-full cursor-pointer" style={{ backgroundColor: isMenu ? 'rgba(11, 20, 26, .1)' : '' }} onClick={() => setIsMenu(!isMenu)}><MoreVertIcon fontSize={width >= 768 ? "medium" : "small"} /></div>
+                        {/* <button className="bg-blue-500 text-white py-1.5 px-2 rounded-full" onClick={() => setAddMember({ ...addMember, isOpen: true, name: '' })} ><PersonAddIcon /></button> */}
                     </div>
                     <Tabs
                         className="border-b border-slate-300"
@@ -237,6 +241,13 @@ const Groups = () => {
                         ))}
                     </Tabs>
                 </div>
+                {isMenu && <div className="absolute right-5 top-[50px] w-[250px] py-2 bg-white rounded-[4px] shadow-xl z-50">
+                    {menuLists?.map((ele, index) => {
+                        return (
+                            <div key={index} className="py-2 px-5 hover:bg-[#f5f6f6] text-[#3b4a54] text-sm">{ele}</div>
+                        )
+                    })}
+                </div>}
                 <div className="h-[559px] overflow-y-scroll relative"> {/*full 91%*/}
                     <div {...handlers} className="h-full w-full">
                         {handleTabContent()}
@@ -314,7 +325,7 @@ const Groups = () => {
                     <Dialog open={viewMember} onClose={() => setViewMember(false)} className="rounded-none">
                         <div className="h-[250px] md:min-h-[400px] w-[250px] md:min-w-[400px]">
                             <div className="bg-blue-500 text-white flex items-center gap-3 p-4 sticky top-0 left-0 right-0 z-10">
-                                <CloseIcon className="cursor-pointer" onClick={() => setViewMember(false)}/>
+                                <CloseIcon className="cursor-pointer" onClick={() => setViewMember(false)} />
                                 <div>Members</div>
                             </div>
                             <div>
